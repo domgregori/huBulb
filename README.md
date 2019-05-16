@@ -28,22 +28,22 @@ One USB cable powers the D1 Wemos and the 24 bit LED ring, the other powers the 
 
 
 ## To Make
-My STL files are on Thingiverse [here]() to 3D print the bulb. There are 3 pieces: bulb base, LED mount, bulb lid
+* My STL files are on Thingiverse [here]() to 3D print the bulb. There are 3 pieces: bulb base, LED mount, bulb lid
 
-Connect D5 on Wemos -> 24bit ring DI. 24bit DO -> 16bit DI. 16bit DO -> 8bit DI.
+* Connect D5 on Wemos -> 24bit ring DI. 24bit DO -> 16bit DI. 16bit DO -> 8bit DI.
 
-Connect 5v and GND from Wemos to 24bit.
+* Connect 5v and GND from Wemos to 24bit.
 
-Connect 5v and GND from second USB port to 16bit and 8bit
+* Connect 5v and GND from second USB port to 16bit and 8bit
 I connected the ground between 24bit/16bit/8bit but probably does not need that because the USB charger probably shares the ground in the unit.
 
-Download sketch and change settings in [Settings.h](Settings.h) to match MQTT and your Wifi.
+* Download sketch and change settings in [Settings.h](Settings.h) to match MQTT and your Wifi.
 
-Without the USB charger plugin, connect and flash the Wemos with my sketch or any other project.
+* Without the USB charger plugin, connect and flash the Wemos with my sketch or any other project.
 
-Push the USB plugs through the bottom of the printed bulb base and and then insert the plugs into the screw outlet. (The fit is meant to be tight so the usb charger doesn't move. I had to take a utility knife to the openings because of my printer.)
+* Push the USB plugs through the bottom of the printed bulb base and and then insert the plugs into the screw outlet. (The fit is meant to be tight so the usb charger doesn't move. I had to take a utility knife to the openings because of my printer.)
 
-Screw the bulb into an outlet that has power and it should connect if your settings are correct.
+* Screw the bulb into an outlet that has power and it should connect if your settings are correct.
 
 
 ## To Use
