@@ -1,0 +1,34 @@
+  - platform: mqtt
+    name: "huBulb"
+    state_topic: "huBulb/status"
+    brightness_state_topic: "huBulb/status"
+    effect_state_topic: "huBulb/status"
+    rgb_state_topic: "huBulb/status"
+    payload_on: "on"
+    payload_off: "off"
+    command_topic: "huBulb/power"
+    brightness_command_topic: "huBulb/brightness"
+    rgb_command_topic: "huBulb/color"
+    effect_command_topic: "huBulb/effect"
+    #availability_value_template: "{{ value_json.status }}"
+    brightness_value_template: "{{ value_json.brightness }}"
+    rgb_value_template: "{{ value_json.color | join(',') }}"
+    effect_value_template: "{{ value_json.pattern }}"
+    state_value_template: "{{ value_json.power }}"
+    color_temp: true
+    effect_list:
+    ######
+      - "0"
+      - "1"
+      - "2"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
+      - "7"
+      - "8"
+      - "9"
+      - "10"
+    optimistic: false
+    qos: 1
+    retain: true
