@@ -8,17 +8,17 @@ const char* ssid = "";
 const char* password = "";
 
 
-#define DATA_PIN      5     // for Huzzah: Pins w/o special function:  #4,#5, #12, #13, #14; // #16 does not work :(
-#define LED_TYPE      WS2812
+#define DATA_PIN      D5     // for Huzzah: Pins w/o special function:  #4,#5, #12, #13, #14; // #16 does not work :(
+#define LED_TYPE      WS2812B
 #define COLOR_ORDER   GRB
-#define NUM_LEDS      150
+#define NUM_LEDS      48
 
-#define MILLI_AMPS         500     // IMPORTANT: set here the maxmilli-Amps of your power supply 5V 2A = 2000
+#define MILLI_AMPS         3000     // IMPORTANT: set here the maxmilli-Amps of your power supply 5V 2A = 2000
 #define FRAMES_PER_SECOND  120 // here you can control the speed. With the Access Point / Web Server the animations run a bit slower.
 
 // MQTT Broker settings
 const char* mqtt_server = "";
-const int mqtt_port = 8883; // Change this if u don't use a SSL connection
+const int mqtt_port = 1883; // Change this if u don't use a SSL connection
 const char* mqtt_user = "";
 const char* mqtt_password = "";
 const char* mqtt_topic = "";
