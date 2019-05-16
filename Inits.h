@@ -99,19 +99,19 @@ void initWlan() {
 }
 
 // Only to test if SSL cert is matching if u have connection problems ...
-void verifytls() {
-  // Use WiFiClientSecure class to create TLS connection
-  Serial.print(" verifytls ... connecting to ");
-  Serial.println(mqtt_server);
-  if (!espClient.connect(mqtt_server, 8883)) {
-    Serial.println("connection failed");
-    return;
-  }
-
-  Serial.println(" checking fingerprint ... ");
-  if (espClient.verify(fingerprint, mqtt_server)) {
-    Serial.println("certificate matches");
-  } else {
-    Serial.println("certificate doesn't match");
-  }
-}
+//void verifytls() {
+//  // Use WiFiClientSecure class to create TLS connection
+//  Serial.print(" verifytls ... connecting to ");
+//  Serial.println(mqtt_server);
+//  if (!espClient.connect(mqtt_server, 8883)) {
+//    Serial.println("connection failed");
+//    return;
+//  }
+//
+//  Serial.println(" checking fingerprint ... ");
+//  if (espClient.verify(fingerprint, mqtt_server)) {
+//    Serial.println("certificate matches");
+//  } else {
+//    Serial.println("certificate doesn't match");
+//  }
+//}
