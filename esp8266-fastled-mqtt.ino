@@ -1,4 +1,5 @@
 /*
+   huBulb: https://github.com/domgregori/huBulb
    ESP8266 + FastLED + MQTT: https://github.com/jasoncoon/esp8266-fastled-webserver
    Copyright (C) 2015 Jason Coon
 
@@ -29,9 +30,10 @@ extern "C" {
 }
 
 #include <ESP8266WiFi.h>
-#include <WiFiClientSecure.h> // Only use it with SSL on MQTT Broker
+#include <WiFiClient.h>
 #include <EEPROM.h>
 #include <PubSubClient.h>
+#include <ArduinoJson.h>
 #include "GradientPalettes.h"
 #include "Settings.h"
 
@@ -77,7 +79,7 @@ CRGB solidColor = CRGB::Black;
 uint8_t power = 1;
 
 // Mqtt Vars
-WiFiClientSecure espClient;
+WiFiClient espClient;
 PubSubClient client(espClient);
 
 
@@ -109,6 +111,11 @@ const uint8_t patternCount = ARRAY_SIZE(patterns);
 
 #include "Inits.h"
 
+int powerFlag = 100;
+int patternFlag = 100;
+int brightnessFlag = 300;
+int colorFlag[3] = {0,0,0};
+int timer = millis();
 
 void setup(void) {
   Serial.begin(115200);
@@ -121,6 +128,7 @@ void setup(void) {
   logSys();
 
   initWlan();
+  
 
   // Only to validate certs if u have problems ...
   // verifytls();
@@ -131,79 +139,42 @@ void setup(void) {
   autoPlayTimeout = millis() + (autoPlayDurationSeconds * 1000);
 }
 
-// Format is: command:value
-// value has to be a number, except rgb commands
+
 void callback(char* topic, byte* payload, unsigned int length) {
-  // handle message arrived
   char tmp[length + 1];
   strncpy(tmp, (char*)payload, length);
   tmp[length] = '\0';
   String data(tmp);
 
-
-  Serial.printf("Received Data from Topic: %s", data.c_str());
+  Serial.printf("Received Data from Topic: %s ", topic);
+  Serial.print(data);
   Serial.println();
-  if ( data.length() > 0) {
-
-    if (data.startsWith("rgb(")) {
-      data.replace("rgb(","");
+  if (data.length() > 0){
+    if (strcmp(topic,"huBulb/power")==0) {
+      if (data == "on"){
+        setPower(1);
+      } else if (data == "off") {
+        setPower(0);
+      }
+            
+    } else if (strcmp(topic,"huBulb/brightness")==0) {
+      setBrightness(data.toInt());
+      
+    } else if (strcmp(topic,"huBulb/effect")==0) {
+      setPattern(data.toInt());
+      
+    } else if (strcmp(topic,"huBulb/color")==0) {
       String r =  getValue(data, ',', 0);
       String g =  getValue(data, ',', 1);
-
       String b =  getValue(data, ',', 2);
-      b.replace("hallo","");
-      Serial.printf("Received R: %s G: %s B: %s", r.c_str(), g.c_str(), b.c_str());
-      Serial.println();
-      
       if (r.length() > 0 && g.length() > 0 && b.length() > 0) {
         setSolidColor(r.toInt(), g.toInt(), b.toInt());
       }
-    }else {
-      String command =  getValue(data, ':', 0);
-      String value = getValue(data, ':', 1);
-  
-      if (command.length() > 0) {
-  
-        if (command.equals("power")) {
-          if (isValidNumber(value)) {
-            setPower(value.toInt());
-          }
-        } else if (command.equals("solidcolor")) {
-          String r =  getValue(data, ':', 2);
-          String g =  getValue(data, ':', 4);
-          String b =  getValue(data, ':', 6);
-          Serial.printf("Received R: %s G: %s B: %s", r.c_str(), g.c_str(), b.c_str());
-          Serial.println();
-          if (r.length() > 0 && g.length() > 0 && b.length() > 0) {
-            setSolidColor(r.toInt(), g.toInt(), b.toInt());
-          }
-        } else if (command.equals("pattern")) {
-          if (isValidNumber(value)) {
-            setPattern(value.toInt());
-          }
-        } else if (command.equals("brightness")) {
-          if (isValidNumber(value)) {
-            setBrightness(value.toInt());
-          }
-        } else if (command.equals("brightnessAdjust")) {
-          if (isValidNumber(value)) {
-            adjustBrightness(value.toInt() == 0 ? false : true);
-          }
-        } else if (command.equals("patternAdjust")) {
-          if (isValidNumber(value)) {
-            adjustPattern(value.toInt() == 0 ? false : true);
-          }
-        }
-      }
     }
-    
-   
   }
-  Serial.println("Finished Topic Data ...");
 
+  
 }
-
-
 
 void loop(void) {
   yield(); // Avoid crashes on ESP8266
@@ -214,6 +185,8 @@ void loop(void) {
   }
   client.loop();
 
+
+
   if (power == 0) {
     fill_solid(leds, NUM_LEDS, CRGB::Black);
     FastLED.show();
@@ -221,9 +194,6 @@ void loop(void) {
     return;
   }
 
-  // EVERY_N_SECONDS(10) {
-  //   Serial.print( F("Heap: ") ); Serial.println(system_get_free_heap_size());
-  // }
 
   EVERY_N_MILLISECONDS( 20 ) {
     gHue++;  // slowly cycle the "base color" through the rainbow
@@ -249,6 +219,42 @@ void loop(void) {
   patterns[currentPatternIndex].pattern();
 
   FastLED.show();
+  
+  if ((powerFlag != EEPROM.read(5)) || (brightnessFlag != EEPROM.read(0)) || (patternFlag != EEPROM.read(1)) || (colorFlag[0] != EEPROM.read(2)) || (colorFlag[1] != EEPROM.read(3)) || (colorFlag[2] != EEPROM.read(4)) || (millis() - timer >= 5000)) {
+    StaticJsonDocument<200> jsonBuffer;
+    JsonObject json = jsonBuffer.to<JsonObject>();
+    json["status"] = "online";
+    if (EEPROM.read(5) == 1) {
+      json["power"] = "on";
+    } else {
+      json["power"] = "off";
+    }    
+    json["brightness"] = EEPROM.read(0);
+    json["pattern"] = EEPROM.read(1);
+    JsonArray colorJ = json.createNestedArray("color");
+    json["color"].add(EEPROM.read(2));
+    json["color"].add(EEPROM.read(3));
+    json["color"].add(EEPROM.read(4));
+    char buff[200];
+    serializeJson(json, buff);
+
+    Serial.println(buff);
+    
+    if (client.publish("huBulb/status", buff, true) == false) {
+      Serial.println("Error publishing status");
+    }
+
+    json.clear();
+
+    powerFlag = EEPROM.read(5);
+    brightnessFlag = EEPROM.read(0);
+    patternFlag = EEPROM.read(1);
+    colorFlag[0] = EEPROM.read(2);
+    colorFlag[1] = EEPROM.read(3);
+    colorFlag[2] = EEPROM.read(4);
+    timer = millis();
+  }
+  
 
   // insert a delay to keep the framerate modest
   delay(1000 / FRAMES_PER_SECOND);
@@ -258,9 +264,12 @@ void loop(void) {
 void reconnectMqtt() {
   while (!client.connected()) {
     Serial.println("Attempting MQTT connection...");
-    if (client.connect(mqtt_clientid, mqtt_user, mqtt_password)) {
+    if (client.connect(mqtt_clientid, mqtt_user, mqtt_password, "huBulb/status", 1, 0, "{\"status\":\"offline\"}")) {
       Serial.println("connected");
-      client.subscribe(mqtt_topic);
+      client.subscribe("huBulb/power");
+      client.subscribe("huBulb/brightness");
+      client.subscribe("huBulb/effect");
+      client.subscribe("huBulb/color");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -275,6 +284,12 @@ void reconnectMqtt() {
 void setPower(uint8_t value)
 {
   power = value == 0 ? 0 : 1;
+  if (power == 0) {
+    Serial.println("{\"power\":\"off\"}");
+    if (client.publish("huBulb/status", "{\"power\":\"off\"}", true) == false) {
+      Serial.println("Error publishing power");
+    }
+  }
   EEPROM.write(5, power);
   EEPROM.commit();
   
