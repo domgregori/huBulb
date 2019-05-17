@@ -7,7 +7,7 @@ This is a work in progress and uses a modified version of [esp8266-fastled-mqtt 
 
 
 ## TODO/Notes
-* Optimize code
+* Optimize code (as in, learn C++)
 * Create variables for topics so you don't have to change them manually
 * Add color temp support
 * Find a cheap higher amp USB power supply that can output at least 3A (LEDs are currently underpowered at full brightness)
