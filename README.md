@@ -28,7 +28,7 @@ One USB cable powers the D1 Wemos and the 24 bit LED ring, the other powers the 
 
 
 ## To Make
-* My STL files are on Thingiverse [here]() to 3D print the bulb. There are 3 pieces: bulb base, LED mount, bulb lid
+* My STL files are on Thingiverse [here](https://www.thingiverse.com/thing:3635461) to 3D print the bulb. There are 3 pieces: bulb base, LED mount, bulb lid
 
 * Connect D5 on Wemos -> 24bit ring DI. 24bit DO -> 16bit DI. 16bit DO -> 8bit DI.
 
