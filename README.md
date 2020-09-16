@@ -18,7 +18,7 @@ This is a work in progress and uses a modified version of [esp8266-fastled-mqtt 
 Item | Distributer | Cost | Link
 ------------ | ------------- | ------------- | -------------
 USB Charger | AliExpress | $1.77ea | [Link](https://www.aliexpress.com/item/Dual-USB-Cell-Mobile-Phone-Charger-5V2-1A-1A-EU-US-Plug-Wall-Power-Adapter-for/32807780731.html)
-Light Bulb Socket Outlet | Amazon | $2.75ea | [Link](https://www.amazon.com/gp/product/B01NCVQBB9)
+Light Bulb Socket Outlet | Amazon | $5.96 for two | [Link](https://www.amazon.com/gp/product/B002DN6QX2/)
 D1 Wemos Mini | AliExpress | $2.73ea | [Link](https://www.aliexpress.com/item/D1-mini-Mini-NodeMcu-4M-bytes-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266-by/32633763949.html)
 WS2812 Ring Lights–24,16,8 size | AliExpress | $9.97total | [Link](https://www.aliexpress.com/item/1PCS-Pixel-RGB-LED-Ring-1Bit-8Bit-16Bit-24Bit-35Bit-45Bit-WS2812-5050-RGB-LED-Module/32950477261.html)
 2x USB cords | - | - | -
